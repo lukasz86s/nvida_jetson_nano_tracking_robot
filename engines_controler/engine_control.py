@@ -47,7 +47,15 @@ class RobotMovement:
         
     def backward(self, power):
         self._engines.left_backward(power)
-        self._engines.right_backward(power)    
+        self._engines.right_backward(power)
+    
+    def left(self, power):
+        self._engines.left_backward(power)
+        self._engines.right_forward(power)
+    
+    def right(self, power):
+        self._engines.left_forward(power)
+        self._engines.right_backward(power)
         
     def stop(self):
         self._engines.left_stop()
@@ -56,6 +64,7 @@ class RobotMovement:
     def kill_engines(self):
         if self._engines != None:
             self._engines.pwm.stop_thread()
+            time.sleep(1)
             self._engines.pwm.cleanup_pins()
             del(self._engines)
             self._engines = None
