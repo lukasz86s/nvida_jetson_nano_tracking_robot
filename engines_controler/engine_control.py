@@ -28,7 +28,7 @@ class Engines:
         self.pwm.set_pwm_duty_cycle(self.__right_a, power)
         self.pwm.set_pwm_duty_cycle(self.__right_b, 0)
         
-    def right_basckward(self,power):
+    def right_backward(self,power):
         self.pwm.set_pwm_duty_cycle(self.__right_b, power)
         self.pwm.set_pwm_duty_cycle(self.__right_a, 0)
         

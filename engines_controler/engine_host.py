@@ -47,8 +47,8 @@ def right():
     robot_move.right(power)
     return jsonify({"Ok": "engine run "}), 200
 
-@app.route('/back', methods=['POST'])
-def back():
+@app.route('/backward', methods=['POST'])
+def backward():
     data = request.json
     power = data.get("power")
     
