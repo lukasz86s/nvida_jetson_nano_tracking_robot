@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Streaming</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+</head>
+<body>
+    <h1>Camera Streaming</h1>
+    <div id="video-container"></div>
+
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('stream', function(data) {
+            var img = document.createElement('img');
+            img.src = 'data:image/jpeg;base64,' + data;
+            document.getElementById('video-container').innerHTML = '';
+            document.getElementById('video-container').appendChild(img);
+        });
+    </script>
+</body>
+</html>
