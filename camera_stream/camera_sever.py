@@ -1,19 +1,17 @@
 
 from jetcam.csi_camera import CSICamera
 from jetcam.utils import bgr8_to_jpeg
-
+from flask import Flask, render_template
+from flask_socketio import SocketIO
+import base64
 
 #camera = cv2.VideoCapture(0)  # Numer urządzenia kamery (domyślnie 0)
 camera = CSICamera(width=224, height=224, capture_width=1280, capture_height=720, capture_fps=30)
-print(camera)
 frame = camera.read()
 buffer =  bgr8_to_jpeg(frame)
 
-import base64
-
 frame_encoded = base64.b64encode(buffer).decode('utf-8')
-from flask import Flask, render_template
-from flask_socketio import SocketIO
+
 #import cv2
 app = Flask(__name__)
 app.config['LAZY_LOADING'] = False
