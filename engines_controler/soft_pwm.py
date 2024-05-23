@@ -4,8 +4,8 @@ from threading import Thread
 GPIO.setmode(GPIO.BCM)
 
 class PWM:
-    """create simple soft pwm with 10 duty cycle steps and periond 20 times per 1 second"""
-    __PERIOD = 1/200 # 20 * 10 steps
+    """create simple soft pwm with 10 duty cycle steps and periond 5 times per 1 second"""
+    __PERIOD = 1/50 # 5 * 10 steps
     def __init__(self, *args):
         """ args - sequence numbers of pins wich will generate pwm"""
         self._used_pins = args
@@ -28,14 +28,18 @@ class PWM:
         while self._thread_working:
             time.sleep(self.__PERIOD)
             timer += 1
-            if(timer == 200):   #restart timer every 1s
+            if(timer == 1000):   #restart timer every 10s
                 timer = 0
             step_position = timer%10
             for pin in self._used_pins:
-                    if(step_position == 0 and self._pwms_duty_cycle[pin] != 0):
+                    duty_cycle = self._pwms_duty_cycle[pin]
+                    if duty_cycle == 10:
                         GPIO.output(pin, GPIO.HIGH)
-                    elif(step_position == self._pwms_duty_cycle[pin]):
-                        GPIO.output(pin, GPIO.LOW)
+                    else:
+                        if(step_position == 0 and duty_cycle != 0):
+                            GPIO.output(pin, GPIO.HIGH)
+                        elif(step_position == duty_cycle):
+                            GPIO.output(pin, GPIO.LOW)
                 
     def run_in_thread(self):
         self._thread.start()

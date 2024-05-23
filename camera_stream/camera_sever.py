@@ -1,27 +1,36 @@
-from flask import Flask, render_template
-from flask_socketio import SocketIO
-import cv2
+
+from jetcam.csi_camera import CSICamera
+from jetcam.utils import bgr8_to_jpeg
+
+
+#camera = cv2.VideoCapture(0)  # Numer urządzenia kamery (domyślnie 0)
+camera = CSICamera(width=224, height=224, capture_width=1280, capture_height=720, capture_fps=30)
+print(camera)
+frame = camera.read()
+buffer =  bgr8_to_jpeg(frame)
+
 import base64
 
+frame_encoded = base64.b64encode(buffer).decode('utf-8')
+from flask import Flask, render_template
+from flask_socketio import SocketIO
+#import cv2
 app = Flask(__name__)
+app.config['LAZY_LOADING'] = False
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
-camera = cv2.VideoCapture(0)  # Numer urządzenia kamery (domyślnie 0)
 
 def generate_frames():
+    global frame_encoded
     """capture camera frame and emit it to the stream"""
     while True:
-        success, frame = camera.read()
-        #TODO: think about handling frame read failure
-        if not success:
-            break
-        else:
-            # conversion to base64
-            _, buffer = cv2.imencode('.jpg', frame)
-            frame_encoded = base64.b64encode(buffer).decode('utf-8')
-            # sendig encoded frmae 
-            socketio.emit('stream', frame_encoded)
-    camera.release()
+        frame = camera.read()
+        # # conversion to base64
+        buffer =  bgr8_to_jpeg(frame)
+        frame_encoded = base64.b64encode(buffer).decode('utf-8')
+        # sendig encoded frmae 
+        socketio.emit('stream', frame_encoded)
+
 
 # Endpoint video stream
 @app.route('/')
@@ -35,4 +44,4 @@ def connect():
     socketio.start_background_task(target=generate_frames)
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', debug=True, allow_unsafe_werkzeug=True)
+    socketio.run(app, host='0.0.0.0', debug=False, allow_unsafe_werkzeug=True)
