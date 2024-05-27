@@ -1,3 +1,2 @@
-engines_controler/.ipynb_checkpoints/
-engines_controler/__pycache__/
-camera_stream/.ipynb_checkpoints/
+.ipynb_checkpoints
+__pycache__

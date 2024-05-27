@@ -3,29 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Control Panel</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script>
+    <script src="https://cdn.socket.io/4.1.2/socket.io.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const socket = io();
 
-            document.getElementById("left").onclick = () => {
-                socket.emit('move', { direction: 'left', power: 10 });
-            };
+            const buttons = [
+                { id: "left", command: { direction: 'left', power: 10 } },
+                { id: "right", command: { direction: 'right', power: 10 } },
+                { id: "forward", command: { direction: 'forward', power: 10 } },
+                { id: "stop", command: { direction: 'stop' } },
+                { id: "backward", command: { direction: 'backward', power: 10 } }
+            ];
 
-            document.getElementById("right").onclick = () => {
-                socket.emit('move', { direction: 'right', power: 10 });
-            };
+            let intervalId;
 
-            document.getElementById("forward").onclick = () => {
-                socket.emit('move', { direction: 'forward', power: 10 });
-            };
+            buttons.forEach(button => {
+                const element = document.getElementById(button.id);
+                element.addEventListener('mousedown', () => {
+                    intervalId = setInterval(() => {
+                        socket.emit('move', button.command);
+                    }, 100);
+                });
 
-            document.getElementById("stop").onclick = () => {
-                socket.emit('move', { direction: 'stop' });
-            };
-            document.getElementById("backward").onclick = () => {
-                socket.emit('move', { direction: 'backward' , power: 10});
-            };
+                element.addEventListener('mouseup', () => {
+                    clearInterval(intervalId);
+                });
+
+                element.addEventListener('mouseleave', () => {
+                    clearInterval(intervalId);
+                });
+            });
         });
     </script>
 </head>
@@ -35,6 +43,6 @@
     <button id="right">Right</button>
     <button id="forward">Forward</button>
     <button id="stop">Stop</button>
-    <button id="backward">backward</button>
+    <button id="backward">Backward</button>
 </body>
 </html>
