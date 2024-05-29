@@ -6,17 +6,16 @@ from flask_socketio import SocketIO
 import base64
 
 #camera = cv2.VideoCapture(0)  # Numer urządzenia kamery (domyślnie 0)
-camera = CSICamera(width=224, height=224, capture_width=1280, capture_height=720, capture_fps=30)
+camera = CSICamera(width=480, height=270, capture_width=1280, capture_height=720, capture_fps=30)
 frame = camera.read()
 buffer =  bgr8_to_jpeg(frame)
 
 frame_encoded = base64.b64encode(buffer).decode('utf-8')
 
-#import cv2
 app = Flask(__name__)
 app.config['LAZY_LOADING'] = False
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 def generate_frames():
     global frame_encoded
@@ -42,4 +41,4 @@ def connect():
     socketio.start_background_task(target=generate_frames)
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', debug=False, allow_unsafe_werkzeug=True)
+    socketio.run( app,host='0.0.0.0',port=5001, debug=False, allow_unsafe_werkzeug=True)

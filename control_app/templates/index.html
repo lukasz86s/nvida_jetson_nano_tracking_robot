@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Control Panel with Camera Feed</title>
+    <script src="https://cdn.socket.io/4.1.2/socket.io.min.js"></script>
+
+
+</head>
+<body>
+
+    <script>
+        var socket = io('http://192.168.55.1:5001/');
+
+        socket.on('stream', function(data) {
+            var img = document.createElement('img');
+            img.src = 'data:image/jpeg;base64,' + data;
+            document.getElementById('video-container').innerHTML = '';
+            document.getElementById('video-container').appendChild(img);
+        });
+        
+        document.addEventListener("DOMContentLoaded", () => {
+        const socketButtons = io('http://192.168.55.1:5000');
+        const buttons = [
+            { id: "left", command: { direction: 'left', power: 10 } },
+            { id: "right", command: { direction: 'right', power: 10 } },
+            { id: "forward", command: { direction: 'forward', power: 10 } },
+            { id: "stop", command: { direction: 'stop' } },
+            { id: "backward", command: { direction: 'backward', power: 10 } }
+        ];
+
+        let intervalId;
+        
+        buttons.forEach(button => {
+                const element = document.getElementById(button.id);
+                element.addEventListener('mousedown', () => {
+                    intervalId = setInterval(() => {
+                        socketButtons.emit('move', button.command);
+                    }, 100);
+                });
+
+                element.addEventListener('touchstart', () => {
+                intervalId = setInterval(() => {
+                    socketButtons.emit('move', button.command);
+                }, 100);
+                });
+
+                element.addEventListener('mouseup', () => {
+                    clearInterval(intervalId);
+                });
+
+                element.addEventListener('mouseleave', () => {
+                    clearInterval(intervalId);
+                });
+            });
+        });
+    </script>
+    <h1>Camera</h1>
+    <div id="video-container"></div>
+    <h1>Control Panel</h1>
+    <button id="left">Left</button>
+    <button id="forward">Forward</button>
+    <button id="right">Right</button>
+    <button id="backward">Backward</button>
+    <button id="stop">Stop</button>
+</body>
+</html>

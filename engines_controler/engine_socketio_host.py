@@ -15,7 +15,7 @@ robot_move = RobotMovement(left_pin_a, left_pin_b, right_pin_a, right_pin_b)
 app = Flask(__name__)
 #TODO: set secret key in os.env or in not tracking file
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 message_time = time.time()
 message_time_flag = 0
 
@@ -65,5 +65,5 @@ if __name__ == '__main__':
     checker_thread = threading.Thread(target=check_message_time)
     checker_thread.daemon = True
     checker_thread.start()
-    socketio.run(app, host='0.0.0.0', debug=False, allow_unsafe_werkzeug=True)
+    socketio.run(app, host='0.0.0.0',port=5000, debug=False, allow_unsafe_werkzeug=True)
     
