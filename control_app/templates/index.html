@@ -10,7 +10,7 @@
 <body>
 
     <script>
-        var socket = io('http://192.168.55.1:5001/');
+        var socket = io('http://192.168.100.129:5001');
 
         socket.on('stream', function(data) {
             var img = document.createElement('img');
@@ -20,7 +20,7 @@
         });
         
         document.addEventListener("DOMContentLoaded", () => {
-        const socketButtons = io('http://192.168.55.1:5000');
+        const socketButtons = io('http://192.168.100.129:5000');
         const buttons = [
             { id: "left", command: { direction: 'left', power: 10 } },
             { id: "right", command: { direction: 'right', power: 10 } },
